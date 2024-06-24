@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnimeAIs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      overflow: hidden;
+      background-color: #333;
+    }
+    .navbar a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+    .navbar a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    .container {
+      padding: 20px;
+    }
+    .magic-navbar {
+      position: relative;
+    }
+    .magic-navbar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(255,0,150,1) 0%, rgba(0,204,255,1) 100%);
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform 0.3s ease-out;
+    }
+    .navbar a:hover ~ .magic-navbar::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <div class="magic-navbar"></div>
+  </div>
+
+  <div class="container">
+    <h1>Welcome to AnimeAIs</h1>
+    <p>Discover the power of AnimeAIs, an innovative AI service designed to answer your anime-related questions. Whether you're looking for recommendations, detailed analyses, or trivia, AnimeAIs is here to assist you. Simply type your question below and let our AI provide you with accurate and engaging responses.</p>
+
+    <h2>Ask Your Question</h2>
+    <p>Type your question below:</p>
+    <input type="text" id="question" placeholder="Type your question here">
+    <button onclick="askQuestion()">Ask</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function askQuestion() {
+      const question = document.getElementById('question').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!question) {
+        resultDiv.innerHTML = '<p style="color: red;">Please enter a question.</p>';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/jasrel1?q=${encodeURIComponent(question)}`);
+        const data = await response.json();
+
+        if (data.status) {
+          resultDiv.innerHTML = `<p><strong>Question:</strong> ${data.question}</p><p><strong>Answer:</strong> ${data.message}</p>`;
+        } else {
+          resultDiv.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
